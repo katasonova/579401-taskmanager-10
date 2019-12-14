@@ -1,6 +1,6 @@
 const Months = [`January`,`February`,`March`,`April`,`May`,`June`,`July`,`August`,`September`,`October`,`November`,`December`];
 
-export const formatTime = (date) => {
+const formatTime = (date) => {
   let hours = date.getHours();
   let minutes = date.getMinutes();
   const format = hours >= 12 ? `PM` : `AM`;
@@ -10,9 +10,11 @@ export const formatTime = (date) => {
   return `${hours}:${minutes} ${format}`
 };
 
-export const formatDate = (date) => {
+const formatDate = (date) => {
   let day = date.getDate();
   let month = Months[date.getMonth()]
 
   return `${day} ${month}`
 };
+
+export {formatTime, formatDate}

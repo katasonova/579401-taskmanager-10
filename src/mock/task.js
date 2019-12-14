@@ -52,6 +52,6 @@ const generateTask = () => {
   }
 };
 
-//const generateTasks = () => {};
+const generateTasks = (number) => new Array(number).fill().map(generateTask());
 
-export {generateTask}
+export {generateTask, generateTasks};
