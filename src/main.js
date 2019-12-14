@@ -1,5 +1,6 @@
 import {renderMenu} from './components/menu'
-import {renderFilter} from './components/filter'
+import {renderFiltersList} from './components/filter'
+import {generateFilters} from './mock/filter'
 import {renderBoard} from './components/board'
 import {renderTaskEditor} from './components/task-editor'
 import {renderTaskItem} from './components/task-item'
@@ -14,14 +15,15 @@ const mainElemen = document.querySelector(`.main`);
 const headerElement = mainElemen.querySelector(`.main__control`);
 
 render(headerElement, renderMenu());
-render(mainElemen, renderFilter());
+const filters = generateFilters();
+console.log(filters);
+render(mainElemen, renderFiltersList(filters));
 render(mainElemen, renderBoard());
 
 const boardListElement = mainElemen.querySelector(`.board__tasks`);
 const boardContainerElement = mainElemen.querySelector(`.board`);
 render(boardListElement, renderTaskEditor());
 const task = generateTask();
-console.log(task);
 render(boardListElement, renderTaskItem(task));
 
 render(boardContainerElement, renderLoadMoreButton());
