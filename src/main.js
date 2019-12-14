@@ -3,6 +3,7 @@ import {renderFilter} from './components/filter'
 import {renderBoard} from './components/board'
 import {renderTaskEditor} from './components/task-editor'
 import {renderTaskItem} from './components/task-item'
+import {generateTask} from './mock/task'
 import {renderLoadMoreButton} from './components/load-more-button'
 
 const render = (container, template, place = `beforeend`) => {
@@ -19,6 +20,8 @@ render(mainElemen, renderBoard());
 const boardListElement = mainElemen.querySelector(`.board__tasks`);
 const boardContainerElement = mainElemen.querySelector(`.board`);
 render(boardListElement, renderTaskEditor());
-render(boardListElement, renderTaskItem());
+const task = generateTask();
+console.log(task);
+render(boardListElement, renderTaskItem(task));
 
 render(boardContainerElement, renderLoadMoreButton());
