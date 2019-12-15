@@ -1,19 +1,18 @@
 import {formatTime, formatDate} from '../utils.js';
 
 const renderHashtags = (array) => {
-  return array.map(el => {
+  return array.map(((el) => {
     return (
       `<span class="card__hashtag-inner">
         <span class="card__hashtag-name">
           #${el}
         </span>
       </span>`
-    )
-  }).join(``);
+    );
+  })).join(``);
 };
 
 export const renderTaskItem = (task) => {
-  //const {description, tags, dueDate, color, repeatingDays} = task;
   const isExpired = task.dueDate instanceof Date && task.dueDate < Date.now();
   const hashtags = renderHashtags(Array.from(task.tags));
   const deadlineClass = isExpired ? `card--deadline` : ``;

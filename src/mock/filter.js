@@ -5,8 +5,8 @@ const generateFilters = () => {
     return {
       name: el,
       count: Math.floor(Math.random() * 10),
-    }
+    };
   });
 };
 
-export {generateFilters}
+export {generateFilters};

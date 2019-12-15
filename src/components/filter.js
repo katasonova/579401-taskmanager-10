@@ -10,7 +10,7 @@ const renderFilterItem = (filter) => {
   <label for="filter__${filter.name}" class="filter__label">${filter.name.toUpperCase()}
     <span class="filter__${filter.name}-count">${filter.count}</span>
   </label
->`)
+>`);
 };
 
 export const renderFiltersList = (filters) => {
