@@ -22,7 +22,7 @@ const RepeatingDays = {
   'su': false
 };
 
-const Tags = [`homework`,`theory`,`practice`,`intensive`,`keks`];
+const Tags = [`homework`, `theory`, `practice`, `intensive`, `keks`];
 
 const Color = [`black`, `yellow`, `blue`, `green`, `pink`];
 
@@ -34,7 +34,7 @@ const generateRepeatingDays = () => {
   return Object.assign({}, RepeatingDays, {
     'mo': Math.random() > 0.5,
   });
-}
+};
 
 const getRandomBoolean = () => Math.random() >= 0.5;
 
@@ -43,15 +43,17 @@ const generateTask = () => {
 
   return {
     description: getRandomArrayElement(Description),
-    dueDate: dueDate,
+    dueDate,
     repeatingDays: dueDate ? RepeatingDays : generateRepeatingDays(),
     tags: new Set(generateTags(Tags)),
     color: getRandomArrayElement(Color),
     isFavorite: getRandomBoolean(),
     isArchive: getRandomBoolean()
-  }
+  };
 };
 
-const generateTasks = (number) => new Array(number).fill().map(generateTask());
+const generateTasks = (number) => {
+  return new Array(number).fill().map(generateTask);
+};
 
-export {generateTask, generateTasks};
+export {generateTasks};
