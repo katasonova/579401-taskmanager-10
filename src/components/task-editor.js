@@ -1,4 +1,4 @@
-import {createElement} from '../utils'
+import {createElement} from '../utils';
 
 const createTaskEditorTemplate = () => {
   return (
@@ -261,7 +261,7 @@ const createTaskEditorTemplate = () => {
 };
 
 export default class TaskEditor {
-  constructor () {
+  constructor() {
     this._element = null;
   }
 
@@ -271,7 +271,7 @@ export default class TaskEditor {
 
   getElement() {
     if (!this._element) {
-      this._element = createElement(this.getTemplate())
+      this._element = createElement(this.getTemplate());
     }
     return this._element;
   }

@@ -1,4 +1,4 @@
-import {createElement} from '../utils'
+import {createElement} from '../utils';
 
 const createLoadMoreButtonTemplate = () => {
   return (
@@ -7,7 +7,7 @@ const createLoadMoreButtonTemplate = () => {
 };
 
 export default class LoadMoreButton {
-  constructor () {
+  constructor() {
     this._element = null;
   }
 

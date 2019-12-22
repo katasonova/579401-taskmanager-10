@@ -1,4 +1,4 @@
-import {createElement} from '../utils'
+import {createElement} from '../utils';
 
 const renderFilterItem = (filter) => {
   return (`
@@ -26,7 +26,7 @@ const createFiltersListTemplate = (filters) => {
 };
 
 export default class Filter {
-  constructor (filter) {
+  constructor(filter) {
     this._filter = filter;
     this._element = null;
   }

@@ -74,7 +74,7 @@ const createTaskItemTemplate = (task) => {
 };
 
 export default class Task {
-  constructor (task) {
+  constructor(task) {
     this._task = task;
     this._element = null;
   }
@@ -85,7 +85,7 @@ export default class Task {
 
   getElement() {
     if (!this._element) {
-      this._element = createElement(this.getTemplate())
+      this._element = createElement(this.getTemplate());
     }
     return this._element;
   }

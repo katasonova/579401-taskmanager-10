@@ -1,4 +1,4 @@
-import {createElement} from '../utils'
+import {createElement} from '../utils';
 
 const createBoardTemplate = () => {
   return (
@@ -14,22 +14,22 @@ const createBoardTemplate = () => {
 };
 
 export default class Board {
-  constructor () {
+  constructor() {
     this._element = null;
   }
 
-  getTemplate () {
+  getTemplate() {
     return createBoardTemplate();
   }
 
-  getElement () {
+  getElement() {
     if (!this._element) {
       this._element = createElement(this.getTemplate());
     }
     return this._element;
   }
 
-  removeElement () {
+  removeElement() {
     this._element = null;
   }
 }

@@ -7,7 +7,7 @@ import Task from './components/task-item'
 import {generateTasks} from './mock/task'
 import LoadMoreButton from './components/load-more-button'
 
-const TASKS_NUMBER = 20;
+const TASKS_NUMBER = 19;
 const INITIAL_TASKS_NUMBER = 8;
 const TASKS_TO_LOAD_MORE = 8;
 
@@ -34,16 +34,33 @@ const boardListElement = mainElemen.querySelector(`.board__tasks`);
 const boardContainerElement = mainElemen.querySelector(`.board`);
 const tasks = generateTasks(TASKS_NUMBER);
 
-render(boardListElement, new TaskEditor(tasks[0]).getElement());
 let presentTasksNumber = INITIAL_TASKS_NUMBER;
-tasks.slice(1, presentTasksNumber).forEach(task => render(boardListElement, new Task(task).getElement()));
+
+const renderTask = (task) => {
+  const taskItem = new Task(task);
+  const taskEditor = new TaskEditor(task);
+
+  const editButton = taskItem.getElement().querySelector(`.card__btn--edit`);
+  editButton.addEventListener(`click`, () => {
+    boardListElement.replaceChild(taskEditor.getElement(), taskItem.getElement());
+  });
+
+  const editTaskFrom = taskEditor.getElement().querySelector(`form`);
+  editTaskFrom.addEventListener(`submit`, () => {
+    boardListElement.replaceChild(taskItem.getElement(), taskEditor.getElement());
+  });
+
+  render(boardListElement, new Task(task).getElement());
+}
+
+tasks.slice(0, presentTasksNumber).forEach(task => renderTask(task));
 
 render(boardContainerElement, new LoadMoreButton().getElement());
 
 const loadMoreButton = boardContainerElement.querySelector(`.load-more`);
 loadMoreButton.addEventListener(`click`, () => {
   presentTasksNumber += TASKS_TO_LOAD_MORE;
-  tasks.slice(INITIAL_TASKS_NUMBER, presentTasksNumber).forEach(task => render(boardListElement, new Task(task).getElement()));
+  tasks.slice(INITIAL_TASKS_NUMBER, presentTasksNumber).forEach(task => renderTask(task));
 
   if (presentTasksNumber >= tasks.length) {
     loadMoreButton.remove();
