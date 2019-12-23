@@ -36,8 +36,6 @@ const tasks = generateTasks(TASKS_NUMBER);
 
 let presentTasksNumber = INITIAL_TASKS_NUMBER;
 
-render(boardContainerElement, new LoadMoreButton().getElement());
-
 const renderTask = (task) => {
   const taskItem = new Task(task);
   const taskEditor = new TaskEditor(task);
@@ -52,10 +50,12 @@ const renderTask = (task) => {
     boardListElement.replaceChild(taskItem.getElement(), taskEditor.getElement());
   });
 
-  render(boardListElement, new Task(task).getElement());
+  render(boardListElement, taskItem.getElement());
 }
 
 tasks.slice(0, presentTasksNumber).forEach(task => renderTask(task));
+
+render(boardContainerElement, new LoadMoreButton().getElement());
 
 const loadMoreButton = boardContainerElement.querySelector(`.load-more`);
 loadMoreButton.addEventListener(`click`, () => {
