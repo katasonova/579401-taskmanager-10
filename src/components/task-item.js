@@ -1,4 +1,4 @@
-import {formatTime, formatDate} from '../utils.js';
+import {formatTime, formatDate, createElement} from '../utils.js';
 
 const renderHashtags = (array) => {
   return array.map(((el) => {
@@ -12,7 +12,7 @@ const renderHashtags = (array) => {
   })).join(``);
 };
 
-export const renderTaskItem = (task) => {
+const createTaskItemTemplate = (task) => {
   const isExpired = task.dueDate instanceof Date && task.dueDate < Date.now();
   const hashtags = renderHashtags(Array.from(task.tags));
   const deadlineClass = isExpired ? `card--deadline` : ``;
@@ -72,3 +72,25 @@ export const renderTaskItem = (task) => {
     </article>`
   );
 };
+
+export default class Task {
+  constructor(task) {
+    this._task = task;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createTaskItemTemplate(this._task);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

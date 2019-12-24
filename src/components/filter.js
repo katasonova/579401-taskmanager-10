@@ -1,3 +1,5 @@
+import {createElement} from '../utils';
+
 const renderFilterItem = (filter) => {
   return (`
   <input
@@ -13,7 +15,7 @@ const renderFilterItem = (filter) => {
 >`);
 };
 
-export const renderFiltersList = (filters) => {
+const createFiltersListTemplate = (filters) => {
   const generatedFilters = filters.map(((el) => renderFilterItem(el))).join(`\n`);
 
   return (`
@@ -22,3 +24,26 @@ export const renderFiltersList = (filters) => {
   </section>`
   );
 };
+
+export default class Filter {
+  constructor(filter) {
+    this._filter = filter;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createFiltersListTemplate(this._filter);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
