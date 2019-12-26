@@ -40,14 +40,30 @@ const renderTask = (task) => {
   const taskItem = new Task(task);
   const taskEditor = new TaskEditor(task);
 
+  const replaceCardWithEditCard = () => {
+    boardListElement.replaceChild(taskItem.getElement(), taskEditor.getElement());
+  };
+
+  const replaceEditCardWithCard = () => {
+    boardListElement.replaceChild(taskEditor.getElement(), taskItem.getElement());;
+  }
+
+  const closeEditCardHandler = (evt) => {
+    if (evt.key === `Escape` || evt.key === `Esc`) {
+      replaceCardWithEditCard();
+      document.removeEventListener(`keydown`, closeEditCardHandler)
+    };
+  };
+
   const editButton = taskItem.getElement().querySelector(`.card__btn--edit`);
   editButton.addEventListener(`click`, () => {
-    boardListElement.replaceChild(taskEditor.getElement(), taskItem.getElement());
+    replaceEditCardWithCard();
+    document.addEventListener(`keydown`, closeEditCardHandler)
   });
 
   const editTaskFrom = taskEditor.getElement().querySelector(`form`);
   editTaskFrom.addEventListener(`submit`, () => {
-    boardListElement.replaceChild(taskItem.getElement(), taskEditor.getElement());
+    replaceCardWithEditCard();
   });
 
   render(boardListElement, taskItem.getElement());
