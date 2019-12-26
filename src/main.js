@@ -2,6 +2,9 @@ import Menu from './components/menu'
 import Filter from './components/filter'
 import {generateFilters} from './mock/filter'
 import Board from './components/board'
+import Sort from './components/sort'
+import Tasks from './components/tasks'
+import NoTasks from './components/no-tasks'
 import TaskEditor from './components/task-editor'
 import Task from './components/task-item'
 import {generateTasks} from './mock/task'
@@ -26,17 +29,14 @@ const mainElemen = document.querySelector(`.main`);
 const headerElement = mainElemen.querySelector(`.main__control`);
 
 render(headerElement, new Menu().getElement());
+
 const filters = generateFilters();
 render(mainElemen, new Filter(filters).getElement());
-render(mainElemen, new Board().getElement());
 
-const boardListElement = mainElemen.querySelector(`.board__tasks`);
-const boardContainerElement = mainElemen.querySelector(`.board`);
-const tasks = generateTasks(TASKS_NUMBER);
+const board = new Board();
+render(mainElemen, board.getElement());
 
-let presentTasksNumber = INITIAL_TASKS_NUMBER;
-
-const renderTask = (task) => {
+const renderTask = (boardListElement, task) => {
   const taskItem = new Task(task);
   const taskEditor = new TaskEditor(task);
 
@@ -69,14 +69,28 @@ const renderTask = (task) => {
   render(boardListElement, taskItem.getElement());
 }
 
-tasks.slice(0, presentTasksNumber).forEach(task => renderTask(task));
+const tasks = generateTasks(TASKS_NUMBER);
+const isAllTasksArchived = tasks.every((task) => task.isArchive);
 
-render(boardContainerElement, new LoadMoreButton().getElement());
+if (isAllTasksArchived) {
+  render(board.getElement(), new NoTasks().getElement())
+} else {
+  render(board.getElement(), new Sort().getElement());
+  render(board.getElement(), new Tasks().getElement());
 
-const loadMoreButton = boardContainerElement.querySelector(`.load-more`);
+  const boardListElement = mainElemen.querySelector(`.board__tasks`);
+  tasks.slice(0, INITIAL_TASKS_NUMBER).forEach(task => renderTask(boardListElement, task));
+}
+
+render(board.getElement(), new LoadMoreButton().getElement());
+
+const loadMoreButton = board.getElement().querySelector(`.load-more`);
+const boardListElement = mainElemen.querySelector(`.board__tasks`);
+let presentTasksNumber = INITIAL_TASKS_NUMBER;
+
 loadMoreButton.addEventListener(`click`, () => {
   presentTasksNumber += TASKS_TO_LOAD_MORE;
-  tasks.slice(INITIAL_TASKS_NUMBER, presentTasksNumber).forEach(task => renderTask(task));
+  tasks.slice(INITIAL_TASKS_NUMBER, presentTasksNumber).forEach(task => renderTask(boardListElement, task));
 
   if (presentTasksNumber >= tasks.length) {
     loadMoreButton.remove();
