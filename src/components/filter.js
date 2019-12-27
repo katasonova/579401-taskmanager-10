@@ -18,10 +18,10 @@ const renderFilterItem = (filter) => {
 const createFiltersListTemplate = (filters) => {
   const generatedFilters = filters.map(((el) => renderFilterItem(el))).join(`\n`);
 
-  return (`
-  <section class="main__filter filter container">
-    ${generatedFilters}
-  </section>`
+  return (
+    `<section class="main__filter filter container">
+      ${generatedFilters}
+    </section>`
   );
 };
 
@@ -39,7 +39,6 @@ export default class Filter {
     if (!this._element) {
       this._element = createElement(this.getTemplate());
     }
-
     return this._element;
   }
 
