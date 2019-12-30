@@ -1,4 +1,4 @@
-import {formatTime, formatDate} from '../utils.js';
+import {formatTime, formatDate} from '../utils/common';
 import AbstractComponent from './abstract.js';
 
 const renderHashtags = (array) => {
@@ -82,5 +82,9 @@ export default class Task extends AbstractComponent {
 
   getTemplate() {
     return createTaskItemTemplate(this._task);
+  }
+
+  setEditButtonClickHandler(handler) {
+    this.getElement().querySelector(`.card__btn--edit`).addEventListener(`click`, handler);
   }
 }

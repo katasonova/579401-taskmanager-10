@@ -17,10 +17,4 @@ const formatDate = (date) => {
   return `${day} ${month}`
 };
 
-const createElement = (template) => {
-  const newElement = document.createElement(`div`);
-  newElement.innerHTML = template;
-  return newElement.firstChild;
-};
-
-export {formatTime, formatDate, createElement}
+export {formatTime, formatDate}

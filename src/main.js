@@ -1,3 +1,4 @@
+import {render} from './utils/render'
 import Menu from './components/menu'
 import Filter from './components/filter'
 import {generateFilters} from './mock/filter'
@@ -13,17 +14,6 @@ import LoadMoreButton from './components/load-more-button'
 const TASKS_NUMBER = 19;
 const INITIAL_TASKS_NUMBER = 8;
 const TASKS_TO_LOAD_MORE = 8;
-
-const render = (container, node, place = `beforeend`) => {
-  switch (place) {
-    case `afterbegin`:
-      container.prepend(node);
-      break;
-    case `beforeend`:
-      container.append(node);
-      break;
-  }
-};
 
 const mainElemen = document.querySelector(`.main`);
 const headerElement = mainElemen.querySelector(`.main__control`);
@@ -55,14 +45,12 @@ const renderTask = (boardListElement, task) => {
     };
   };
 
-  const editButton = taskItem.getElement().querySelector(`.card__btn--edit`);
-  editButton.addEventListener(`click`, () => {
+  taskItem.setEditButtonClickHandler(() => {
     replaceEditCardWithCard();
     document.addEventListener(`keydown`, closeEditCardHandler)
   });
 
-  const editTaskFrom = taskEditor.getElement().querySelector(`form`);
-  editTaskFrom.addEventListener(`submit`, () => {
+  taskEditor.setSubmitHandler(() => {
     replaceCardWithEditCard();
   });
 
@@ -80,19 +68,19 @@ if (isAllTasksArchived) {
 
   const boardListElement = mainElemen.querySelector(`.board__tasks`);
   tasks.slice(0, INITIAL_TASKS_NUMBER).forEach(task => renderTask(boardListElement, task));
+
+  const loadMoreButton = new LoadMoreButton();
+  render(board.getElement(), loadMoreButton.getElement());
+
+  let presentTasksNumber = INITIAL_TASKS_NUMBER;
+
+  loadMoreButton.setLoadMoreButtonClickHandler(() => {
+    const renderedTasks = presentTasksNumber;
+    presentTasksNumber += TASKS_TO_LOAD_MORE;
+    tasks.slice(renderedTasks, presentTasksNumber).forEach(task => renderTask(boardListElement, task));
+
+    if (presentTasksNumber >= tasks.length) {
+      loadMoreButton.getElement().remove();
+    }
+  });
 }
-
-render(board.getElement(), new LoadMoreButton().getElement());
-
-const loadMoreButton = board.getElement().querySelector(`.load-more`);
-const boardListElement = mainElemen.querySelector(`.board__tasks`);
-let presentTasksNumber = INITIAL_TASKS_NUMBER;
-
-loadMoreButton.addEventListener(`click`, () => {
-  presentTasksNumber += TASKS_TO_LOAD_MORE;
-  tasks.slice(INITIAL_TASKS_NUMBER, presentTasksNumber).forEach(task => renderTask(boardListElement, task));
-
-  if (presentTasksNumber >= tasks.length) {
-    loadMoreButton.remove();
-  }
-});
