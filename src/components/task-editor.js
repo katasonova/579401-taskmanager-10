@@ -1,4 +1,4 @@
-import {createElement} from '../utils';
+import AbstractComponent from './abstract';
 
 const createTaskEditorTemplate = () => {
   return (
@@ -260,23 +260,8 @@ const createTaskEditorTemplate = () => {
   );
 };
 
-export default class TaskEditor {
-  constructor() {
-    this._element = null;
-  }
-
+export default class TaskEditor extends AbstractComponent {
   getTemplate() {
     return createTaskEditorTemplate();
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
