@@ -25,7 +25,7 @@ const createFiltersListTemplate = (filters) => {
   );
 };
 
-export default class Filter extends AbstractComponent{
+export default class Filter extends AbstractComponent {
   constructor(filter) {
     super();
     this._filter = filter;
