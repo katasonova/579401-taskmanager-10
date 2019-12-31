@@ -55,27 +55,30 @@ export default class BoardController {
 
     if (isAllTasksArchived) {
       render(container, this._noTasks.getElement());
-    } else {
-      render(container, this._sort.getElement());
-      render(container, this._tasks.getElement());
-
-      const boardListElement = this._tasks.getElement();
-      tasks.slice(0, INITIAL_TASKS_NUMBER).forEach((task) => renderTask(boardListElement, task));
-
-      const loadMoreButton = this._loadMoreButton;
-      render(container, loadMoreButton.getElement());
-
-      let presentTasksNumber = INITIAL_TASKS_NUMBER;
-
-      loadMoreButton.setLoadMoreButtonClickHandler(() => {
-        const renderedTasks = presentTasksNumber;
-        presentTasksNumber += TASKS_TO_LOAD_MORE;
-        tasks.slice(renderedTasks, presentTasksNumber).forEach((task) => renderTask(boardListElement, task));
-
-        if (presentTasksNumber >= tasks.length) {
-          loadMoreButton.getElement().remove();
-        }
-      });
+      return;
     }
+
+    render(container, this._sort.getElement());
+    render(container, this._tasks.getElement());
+
+    const boardListElement = this._tasks.getElement();
+    tasks.slice(0, INITIAL_TASKS_NUMBER).forEach((task) => renderTask(boardListElement, task));
+
+    const loadMoreButton = this._loadMoreButton;
+    render(container, loadMoreButton.getElement());
+
+    let presentTasksNumber = INITIAL_TASKS_NUMBER;
+
+    const loadMoreButtonClickHandler = () => {
+      const renderedTasks = presentTasksNumber;
+      presentTasksNumber += TASKS_TO_LOAD_MORE;
+      tasks.slice(renderedTasks, presentTasksNumber).forEach((task) => renderTask(boardListElement, task));
+
+      if (presentTasksNumber >= tasks.length) {
+        loadMoreButton.getElement().remove();
+      }
+    };
+
+    loadMoreButton.setLoadMoreButtonClickHandler(loadMoreButtonClickHandler);
   }
 }
