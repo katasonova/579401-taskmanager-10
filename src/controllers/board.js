@@ -62,7 +62,6 @@ export default class BoardController {
     render(container, this._tasks.getElement());
 
     const boardListElement = this._tasks.getElement();
-    // tasks.slice(0, INITIAL_TASKS_NUMBER).forEach((task) => renderTask(boardListElement, task));
 
     let sortedTasks = [];
     const sortHandler = () => {
@@ -81,23 +80,27 @@ export default class BoardController {
 
     this._sort.setSortingTypeClickHandler(sortHandler);
 
-    sortedTasks.slice(0, INITIAL_TASKS_NUMBER).forEach((task) => renderTask(boardListElement, task));
+    if (!(sortedTasks === [])) {
+      sortedTasks.slice(0, INITIAL_TASKS_NUMBER).forEach((task) => renderTask(boardListElement, task));
+    }
+    tasks.slice(0, INITIAL_TASKS_NUMBER).forEach((task) => renderTask(boardListElement, task));
 
     const loadMoreButton = this._loadMoreButton;
     render(container, loadMoreButton.getElement());
 
     let presentTasksNumber = INITIAL_TASKS_NUMBER;
 
-    const loadMoreButtonClickHandler = () => {
+    const loadMoreButtonClickHandler = (array) => {
       const renderedTasks = presentTasksNumber;
       presentTasksNumber += TASKS_TO_LOAD_MORE;
-      sortedTasks.slice(renderedTasks, presentTasksNumber).forEach((task) => renderTask(boardListElement, task));
 
-      if (presentTasksNumber >= sortedTasks.length) {
+      array.slice(renderedTasks, presentTasksNumber).forEach((task) => renderTask(boardListElement, task));
+
+      if (presentTasksNumber >= array.length) {
         loadMoreButton.getElement().remove();
       }
     };
 
-    loadMoreButton.setLoadMoreButtonClickHandler(loadMoreButtonClickHandler);
+    loadMoreButton.setLoadMoreButtonClickHandler(() => loadMoreButtonClickHandler(!(sortedTasks === []) || tasks));
   }
 }
