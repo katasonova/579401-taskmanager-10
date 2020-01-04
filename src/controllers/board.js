@@ -1,5 +1,5 @@
 import {render} from '../utils/render';
-import Sort from '../components/sort';
+import Sort, {SortingType} from '../components/sort';
 import Tasks from '../components/tasks';
 import NoTasks from '../components/no-tasks';
 import TaskEditor from '../components/task-editor';
@@ -62,7 +62,26 @@ export default class BoardController {
     render(container, this._tasks.getElement());
 
     const boardListElement = this._tasks.getElement();
-    tasks.slice(0, INITIAL_TASKS_NUMBER).forEach((task) => renderTask(boardListElement, task));
+    // tasks.slice(0, INITIAL_TASKS_NUMBER).forEach((task) => renderTask(boardListElement, task));
+
+    let sortedTasks = [];
+    const sortHandler = () => {
+      switch (SortingType) {
+        case SortingType.DATE_UP:
+          sortedTasks = tasks.slice().sort((a, b) => a.dueDate - b.dueDate);
+          break;
+        case SortingType.DATE_DOWN:
+          sortedTasks = tasks.slice().sort((a, b) => b.dueDate - a.dueDate);
+          break;
+        case SortingType.DEFAULT:
+          sortedTasks = tasks.slice(0, INITIAL_TASKS_NUMBER).forEach((task) => renderTask(boardListElement, task));
+          break;
+      }
+    };
+
+    this._sort.setSortingTypeClickHandler(sortHandler);
+
+    sortedTasks.slice(0, INITIAL_TASKS_NUMBER).forEach((task) => renderTask(boardListElement, task));
 
     const loadMoreButton = this._loadMoreButton;
     render(container, loadMoreButton.getElement());
@@ -72,9 +91,9 @@ export default class BoardController {
     const loadMoreButtonClickHandler = () => {
       const renderedTasks = presentTasksNumber;
       presentTasksNumber += TASKS_TO_LOAD_MORE;
-      tasks.slice(renderedTasks, presentTasksNumber).forEach((task) => renderTask(boardListElement, task));
+      sortedTasks.slice(renderedTasks, presentTasksNumber).forEach((task) => renderTask(boardListElement, task));
 
-      if (presentTasksNumber >= tasks.length) {
+      if (presentTasksNumber >= sortedTasks.length) {
         loadMoreButton.getElement().remove();
       }
     };
