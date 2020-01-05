@@ -9,6 +9,10 @@ import LoadMoreButton from '../components/load-more-button';
 const INITIAL_TASKS_NUMBER = 8;
 const TASKS_TO_LOAD_MORE = 8;
 
+const renderTasks = (container, array) => {
+  array.slice(0, INITIAL_TASKS_NUMBER).forEach((task) => renderTask(container, task));
+};
+
 const renderTask = (boardListElement, task) => {
   const taskItem = new Task(task);
   const taskEditor = new TaskEditor(task);
@@ -73,17 +77,20 @@ export default class BoardController {
           sortedTasks = tasks.slice().sort((a, b) => b.dueDate - a.dueDate);
           break;
         case SortingType.DEFAULT:
-          sortedTasks = tasks.slice(0, INITIAL_TASKS_NUMBER).forEach((task) => renderTask(boardListElement, task));
+          sortedTasks = tasks;
           break;
       }
     };
 
     this._sort.setSortingTypeClickHandler(sortHandler);
 
-    if (!(sortedTasks === [])) {
-      sortedTasks.slice(0, INITIAL_TASKS_NUMBER).forEach((task) => renderTask(boardListElement, task));
+    boardListElement.innerHTML = ``;
+
+    if (!sortedTasks === []) {
+      renderTasks(boardListElement, sortedTasks);
+    } else {
+      renderTasks(boardListElement, tasks);
     }
-    tasks.slice(0, INITIAL_TASKS_NUMBER).forEach((task) => renderTask(boardListElement, task));
 
     const loadMoreButton = this._loadMoreButton;
     render(container, loadMoreButton.getElement());
