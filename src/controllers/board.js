@@ -69,6 +69,7 @@ export default class BoardController {
 
     let sortedTasks = [];
     const sortHandler = (type) => {
+      boardListElement.innerHTML = ``;
       switch (type) {
         case SortingType.DATE_UP:
           sortedTasks = tasks.slice().sort((a, b) => a.dueDate - b.dueDate);
@@ -80,23 +81,18 @@ export default class BoardController {
           sortedTasks = tasks;
           break;
       }
+      renderTasks(boardListElement, sortedTasks);
+      render(container, this._loadMoreButton.getElement());
+      this._loadMoreButton.setLoadMoreButtonClickHandler(() => loadMoreButtonClickHandler(sortedTasks));
     };
-
     this._sort.setSortingTypeClickHandler(sortHandler);
 
-    boardListElement.innerHTML = ``;
-
-    if (!sortedTasks === []) {
-      renderTasks(boardListElement, sortedTasks);
-    } else {
-      renderTasks(boardListElement, tasks);
-    }
+    renderTasks(boardListElement, tasks);
 
     const loadMoreButton = this._loadMoreButton;
     render(container, loadMoreButton.getElement());
 
     let presentTasksNumber = INITIAL_TASKS_NUMBER;
-
     const loadMoreButtonClickHandler = (array) => {
       const renderedTasks = presentTasksNumber;
       presentTasksNumber += TASKS_TO_LOAD_MORE;
@@ -105,9 +101,10 @@ export default class BoardController {
 
       if (presentTasksNumber >= array.length) {
         loadMoreButton.getElement().remove();
+        presentTasksNumber = INITIAL_TASKS_NUMBER;
       }
     };
 
-    loadMoreButton.setLoadMoreButtonClickHandler(() => loadMoreButtonClickHandler(!sortedTasks === [] || tasks));
+    loadMoreButton.setLoadMoreButtonClickHandler(() => loadMoreButtonClickHandler(tasks));
   }
 }
