@@ -84,7 +84,6 @@ export default class BoardController {
       }
       renderTasks(boardListElement, sortedTasks);
       render(container, this._loadMoreButton.getElement());
-      //this._loadMoreButton.setLoadMoreButtonClickHandler(() => loadMoreButtonClickHandler(sortedTasks));
     };
     this._sort.setSortingTypeClickHandler(sortHandler);
 
