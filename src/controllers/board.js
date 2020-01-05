@@ -70,6 +70,7 @@ export default class BoardController {
     let sortedTasks = [];
     const sortHandler = (type) => {
       boardListElement.innerHTML = ``;
+
       switch (type) {
         case SortingType.DATE_UP:
           sortedTasks = tasks.slice().sort((a, b) => a.dueDate - b.dueDate);
@@ -83,7 +84,7 @@ export default class BoardController {
       }
       renderTasks(boardListElement, sortedTasks);
       render(container, this._loadMoreButton.getElement());
-      this._loadMoreButton.setLoadMoreButtonClickHandler(() => loadMoreButtonClickHandler(sortedTasks));
+      //this._loadMoreButton.setLoadMoreButtonClickHandler(() => loadMoreButtonClickHandler(sortedTasks));
     };
     this._sort.setSortingTypeClickHandler(sortHandler);
 
