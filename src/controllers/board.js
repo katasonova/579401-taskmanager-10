@@ -9,10 +9,6 @@ import LoadMoreButton from '../components/load-more-button';
 const INITIAL_TASKS_NUMBER = 8;
 const TASKS_TO_LOAD_MORE = 8;
 
-const renderTasks = (container, array) => {
-  array.slice(0, INITIAL_TASKS_NUMBER).forEach((task) => renderTask(container, task));
-};
-
 const renderTask = (boardListElement, task) => {
   const taskItem = new Task(task);
   const taskEditor = new TaskEditor(task);
@@ -53,6 +49,10 @@ export default class BoardController {
     this._loadMoreButton = new LoadMoreButton();
   }
 
+  renderTasks(container, array) {
+    array.slice(0, INITIAL_TASKS_NUMBER).forEach((task) => renderTask(container, task));
+  }
+
   render(tasks) {
     const container = this._container.getElement();
     const isAllTasksArchived = tasks.every((task) => task.isArchive);
@@ -67,7 +67,7 @@ export default class BoardController {
 
     const boardListElement = this._tasks.getElement();
 
-    let sortedTasks = [];
+    let sortedTasks = tasks;
     const sortHandler = (type) => {
       boardListElement.innerHTML = ``;
 
@@ -79,15 +79,15 @@ export default class BoardController {
           sortedTasks = tasks.slice().sort((a, b) => b.dueDate - a.dueDate);
           break;
         case SortingType.DEFAULT:
-          sortedTasks = tasks;
+          sortedTasks = tasks.slice();
           break;
       }
-      renderTasks(boardListElement, sortedTasks);
+      this.renderTasks(boardListElement, sortedTasks);
       render(container, this._loadMoreButton.getElement());
     };
     this._sort.setSortingTypeClickHandler(sortHandler);
 
-    renderTasks(boardListElement, tasks);
+    this.renderTasks(boardListElement, sortedTasks);
 
     const loadMoreButton = this._loadMoreButton;
     render(container, loadMoreButton.getElement());
@@ -105,6 +105,6 @@ export default class BoardController {
       }
     };
 
-    loadMoreButton.setLoadMoreButtonClickHandler(() => loadMoreButtonClickHandler(tasks));
+    loadMoreButton.setLoadMoreButtonClickHandler(() => loadMoreButtonClickHandler(sortedTasks));
   }
 }
