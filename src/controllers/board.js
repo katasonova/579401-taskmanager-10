@@ -1,5 +1,5 @@
 import {render} from '../utils/render';
-import Sort from '../components/sort';
+import Sort, {SortingType} from '../components/sort';
 import Tasks from '../components/tasks';
 import NoTasks from '../components/no-tasks';
 import TaskEditor from '../components/task-editor';
@@ -49,6 +49,10 @@ export default class BoardController {
     this._loadMoreButton = new LoadMoreButton();
   }
 
+  renderTasks(container, array) {
+    array.slice(0, INITIAL_TASKS_NUMBER).forEach((task) => renderTask(container, task));
+  }
+
   render(tasks) {
     const container = this._container.getElement();
     const isAllTasksArchived = tasks.every((task) => task.isArchive);
@@ -62,23 +66,45 @@ export default class BoardController {
     render(container, this._tasks.getElement());
 
     const boardListElement = this._tasks.getElement();
-    tasks.slice(0, INITIAL_TASKS_NUMBER).forEach((task) => renderTask(boardListElement, task));
+
+    let sortedTasks = tasks;
+    const sortHandler = (type) => {
+      boardListElement.innerHTML = ``;
+
+      switch (type) {
+        case SortingType.DATE_UP:
+          sortedTasks = tasks.slice().sort((a, b) => a.dueDate - b.dueDate);
+          break;
+        case SortingType.DATE_DOWN:
+          sortedTasks = tasks.slice().sort((a, b) => b.dueDate - a.dueDate);
+          break;
+        case SortingType.DEFAULT:
+          sortedTasks = tasks.slice();
+          break;
+      }
+      this.renderTasks(boardListElement, sortedTasks);
+      render(container, this._loadMoreButton.getElement());
+    };
+    this._sort.setSortingTypeClickHandler(sortHandler);
+
+    this.renderTasks(boardListElement, sortedTasks);
 
     const loadMoreButton = this._loadMoreButton;
     render(container, loadMoreButton.getElement());
 
     let presentTasksNumber = INITIAL_TASKS_NUMBER;
-
-    const loadMoreButtonClickHandler = () => {
+    const loadMoreButtonClickHandler = (array) => {
       const renderedTasks = presentTasksNumber;
       presentTasksNumber += TASKS_TO_LOAD_MORE;
-      tasks.slice(renderedTasks, presentTasksNumber).forEach((task) => renderTask(boardListElement, task));
 
-      if (presentTasksNumber >= tasks.length) {
+      array.slice(renderedTasks, presentTasksNumber).forEach((task) => renderTask(boardListElement, task));
+
+      if (presentTasksNumber >= array.length) {
         loadMoreButton.getElement().remove();
+        presentTasksNumber = INITIAL_TASKS_NUMBER;
       }
     };
 
-    loadMoreButton.setLoadMoreButtonClickHandler(loadMoreButtonClickHandler);
+    loadMoreButton.setLoadMoreButtonClickHandler(() => loadMoreButtonClickHandler(sortedTasks));
   }
 }
