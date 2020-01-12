@@ -2,43 +2,11 @@ import {render} from '../utils/render';
 import Sort, {SortingType} from '../components/sort';
 import Tasks from '../components/tasks';
 import NoTasks from '../components/no-tasks';
-import TaskEditor from '../components/task-editor';
-import Task from '../components/task-item';
 import LoadMoreButton from '../components/load-more-button';
+import TaskController from '../controllers/task';
 
 const INITIAL_TASKS_NUMBER = 8;
 const TASKS_TO_LOAD_MORE = 8;
-
-const renderTask = (boardListElement, task) => {
-  const taskItem = new Task(task);
-  const taskEditor = new TaskEditor(task);
-
-  const replaceCardWithEditCard = () => {
-    boardListElement.replaceChild(taskItem.getElement(), taskEditor.getElement());
-  };
-
-  const replaceEditCardWithCard = () => {
-    boardListElement.replaceChild(taskEditor.getElement(), taskItem.getElement());
-  };
-
-  const closeEditCardHandler = (evt) => {
-    if (evt.key === `Escape` || evt.key === `Esc`) {
-      replaceCardWithEditCard();
-      document.removeEventListener(`keydown`, closeEditCardHandler);
-    }
-  };
-
-  taskItem.setEditButtonClickHandler(() => {
-    replaceEditCardWithCard();
-    document.addEventListener(`keydown`, closeEditCardHandler);
-  });
-
-  taskEditor.setSubmitHandler(() => {
-    replaceCardWithEditCard();
-  });
-
-  render(boardListElement, taskItem.getElement());
-};
 
 export default class BoardController {
   constructor(container) {
@@ -50,7 +18,11 @@ export default class BoardController {
   }
 
   renderTasks(container, array) {
-    array.slice(0, INITIAL_TASKS_NUMBER).forEach((task) => renderTask(container, task));
+    return array.slice(0, INITIAL_TASKS_NUMBER).map((task) => {
+      const taskController = new TaskController(container);
+      taskController.render(task);
+      return taskController;
+    });
   }
 
   render(tasks) {
@@ -97,7 +69,7 @@ export default class BoardController {
       const renderedTasks = presentTasksNumber;
       presentTasksNumber += TASKS_TO_LOAD_MORE;
 
-      array.slice(renderedTasks, presentTasksNumber).forEach((task) => renderTask(boardListElement, task));
+      this.renderTasks(boardListElement, array.slice(renderedTasks, presentTasksNumber));
 
       if (presentTasksNumber >= array.length) {
         loadMoreButton.getElement().remove();
