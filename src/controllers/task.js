@@ -3,10 +3,9 @@ import Task from '../components/task-item';
 import {render} from '../utils/render';
 
 export default class TaskController {
-  constructor(container) {
+  constructor(container, onDataChange) {
     this._container = container;
-    this._taskComponent = null;
-    this._taskEditComponent = null;
+    this._onDataChange = onDataChange;
   }
 
   render(task) {
@@ -31,6 +30,18 @@ export default class TaskController {
     this._taskComponent.setEditButtonClickHandler(() => {
       replaceEditCardWithCard();
       document.addEventListener(`keydown`, closeEditCardHandler);
+    });
+
+    this._taskComponent.setArchiveButtonClickHandler(() => {
+      this._onDataChange(this, task, Object.assign({}, task, {
+        isArchive: !task.isArchive
+      }))
+    });
+
+    this._taskComponent.setFavoritesButtonClickHandler(() => {
+      this._onDataChange(this, task, Object.assign({}, task, {
+        isFavorite: !task.isFavorite
+      }))
     });
 
     this._taskEditComponent.setSubmitHandler(() => {
