@@ -1,6 +1,35 @@
-import AbstractComponent from './abstract';
+import AbstractSmartComponent from '../components/abstract-smart';
+import {formatDate, formatTime} from '../utils/common';
+import {DAYS} from '../const';
 
-const createTaskEditorTemplate = () => {
+const createRepeatingDaysTemplate = (arrayOfDays, repeatingDays) => {
+  return arrayOfDays.map((day) => {
+    const isChecked = repeatingDays[day];
+    return (
+      `<input
+          class="visually-hidden card__repeat-day-input"
+          type="checkbox"
+          id="repeat-${day}-4"
+          name="repeat"
+          value="${day}"
+          ${isChecked ? `checked` : ``}
+        />
+        <label class="card__repeat-day" for="repeat-${day}-4"
+          >${day}</label
+        >`
+    );
+  }).join(`\n`);
+};
+
+const createTaskEditorTemplate = (task, props = {}) => {
+  const date = (props.isDateShowing && task.dueDate) ? formatDate(task.dueDate) : ``;
+  const time = (props.isDateShowing && task.dueDate) ? formatTime(task.dueDate) : ``;
+
+  const repeatingDaysTemplate = createRepeatingDaysTemplate(DAYS, props.selectedRepetedDays);
+
+  const isSaveButtonBlocked = (props.isDateShowing && props.isTaskRepeted) ||
+    (props.isTaskRepeted && !Object.values(props.selectedRepetedDays).some(Boolean));
+
   return (
     `<article class="card card--edit card--yellow card--repeat">
       <form class="card__form" method="get">
@@ -25,102 +54,30 @@ const createTaskEditorTemplate = () => {
             <div class="card__details">
               <div class="card__dates">
                 <button class="card__date-deadline-toggle" type="button">
-                  date: <span class="card__date-status">yes</span>
+                  date: <span class="card__date-status">${props.isDateShowing ? `yes` : `no`}</span>
                 </button>
 
-                <fieldset class="card__date-deadline">
-                  <label class="card__input-deadline-wrap">
-                    <input
-                      class="card__date"
-                      type="text"
-                      placeholder=""
-                      name="date"
-                      value="23 September 11:15 PM"
-                    />
-                  </label>
-                </fieldset>
+                ${props.isDateShowing ? `<fieldset class="card__date-deadline">
+                <label class="card__input-deadline-wrap">
+                  <input
+                    class="card__date"
+                    type="text"
+                    placeholder=""
+                    name="date"
+                    value="${date} ${time}"
+                  />
+                </label>
+              </fieldset>` : ``}
 
                 <button class="card__repeat-toggle" type="button">
-                  repeat:<span class="card__repeat-status">yes</span>
+                  repeat:<span class="card__repeat-status">${props.isTaskRepeted ? `yes` : `no`}</span>
                 </button>
 
-                <fieldset class="card__repeat-days">
+                ${props.isTaskRepeted ? `<fieldset class="card__repeat-days">
                   <div class="card__repeat-days-inner">
-                    <input
-                      class="visually-hidden card__repeat-day-input"
-                      type="checkbox"
-                      id="repeat-mo-4"
-                      name="repeat"
-                      value="mo"
-                    />
-                    <label class="card__repeat-day" for="repeat-mo-4"
-                      >mo</label
-                    >
-                    <input
-                      class="visually-hidden card__repeat-day-input"
-                      type="checkbox"
-                      id="repeat-tu-4"
-                      name="repeat"
-                      value="tu"
-                      checked
-                    />
-                    <label class="card__repeat-day" for="repeat-tu-4"
-                      >tu</label
-                    >
-                    <input
-                      class="visually-hidden card__repeat-day-input"
-                      type="checkbox"
-                      id="repeat-we-4"
-                      name="repeat"
-                      value="we"
-                    />
-                    <label class="card__repeat-day" for="repeat-we-4"
-                      >we</label
-                    >
-                    <input
-                      class="visually-hidden card__repeat-day-input"
-                      type="checkbox"
-                      id="repeat-th-4"
-                      name="repeat"
-                      value="th"
-                    />
-                    <label class="card__repeat-day" for="repeat-th-4"
-                      >th</label
-                    >
-                    <input
-                      class="visually-hidden card__repeat-day-input"
-                      type="checkbox"
-                      id="repeat-fr-4"
-                      name="repeat"
-                      value="fr"
-                      checked
-                    />
-                    <label class="card__repeat-day" for="repeat-fr-4"
-                      >fr</label
-                    >
-                    <input
-                      class="visually-hidden card__repeat-day-input"
-                      type="checkbox"
-                      name="repeat"
-                      value="sa"
-                      id="repeat-sa-4"
-                    />
-                    <label class="card__repeat-day" for="repeat-sa-4"
-                      >sa</label
-                    >
-                    <input
-                      class="visually-hidden card__repeat-day-input"
-                      type="checkbox"
-                      id="repeat-su-4"
-                      name="repeat"
-                      value="su"
-                      checked
-                    />
-                    <label class="card__repeat-day" for="repeat-su-4"
-                      >su</label
-                    >
+                  ${repeatingDaysTemplate}
                   </div>
-                </fieldset>
+                </fieldset>` : ``}
               </div>
 
               <div class="card__hashtag">
@@ -251,7 +208,7 @@ const createTaskEditorTemplate = () => {
           </div>
 
           <div class="card__status-btns">
-            <button class="card__save" type="submit">save</button>
+            <button class="card__save" type="submit" ${isSaveButtonBlocked ? `disabled` : ``}>save</button>
             <button class="card__delete" type="button">delete</button>
           </div>
         </div>
@@ -260,12 +217,59 @@ const createTaskEditorTemplate = () => {
   );
 };
 
-export default class TaskEditor extends AbstractComponent {
+export default class TaskEditor extends AbstractSmartComponent {
+  constructor(task) {
+    super();
+
+    this._task = task;
+    this._isDateShowing = !!task.dueDate;
+    this._isTaskRepeted = Object.values(task.repeatingDays).some(Boolean);
+    this._selectedRepetedDays = Object.assign({}, task.repeatingDays);
+    this.__subscribeOnEvents();
+  }
+
+  __subscribeOnEvents() {
+    const element = this.getElement();
+
+    element.querySelector(`.card__date-deadline-toggle`).addEventListener(`click`, () => {
+      this._isDateShowing = !this._isDateShowing;
+
+      this.rerender();
+    });
+
+    element.querySelector(`.card__repeat-toggle`).addEventListener(`click`, () => {
+      this._isTaskRepeted = !this._isTaskRepeted;
+
+      this.rerender();
+    });
+
+    const repeatDays = element.querySelector(`.card__repeat-days`);
+    if (repeatDays) {
+      repeatDays.addEventListener(`change`, (evt) => {
+        this._selectedRepetedDays[evt.target.value] = evt.target.checked;
+
+        this.rerender();
+      });
+    }
+  }
+
   getTemplate() {
-    return createTaskEditorTemplate();
+    return createTaskEditorTemplate(this._task, {
+      isDateShowing: this._isDateShowing,
+      isTaskRepeted: this._isTaskRepeted,
+      selectedRepetedDays: this._selectedRepetedDays
+    });
   }
 
   setSubmitHandler(handler) {
     this.getElement().querySelector(`form`).addEventListener(`submit`, handler);
+  }
+
+  recoveryListeners() {
+    this._subscribeOnEvents();
+  }
+
+  rerender() {
+    super.rerender();
   }
 }

@@ -25,16 +25,16 @@ export default class BoardController {
     });
   }
 
-  _onDataChange(taskController,initialData, changedData) {
+  _onDataChange(taskController, initialData, changedData) {
     const index = this._tasks.findIndex((el) => el === initialData);
 
     if (index === -1) {
       return;
     }
 
-    this._tasks = [].concat(this._tasks.slice(0, index), changedData, this._tasks.slice(index + 1))
+    this._tasks = [].concat(this._tasks.slice(0, index), changedData, this._tasks.slice(index + 1));
     taskController.render(this._tasks[index]);
-  };
+  }
 
   render(tasks) {
     const container = this._container.getElement();
