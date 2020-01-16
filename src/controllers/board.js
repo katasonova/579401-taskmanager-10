@@ -15,11 +15,12 @@ export default class BoardController {
     this._noTasks = new NoTasks();
     this._sort = new Sort();
     this._loadMoreButton = new LoadMoreButton();
+    this._showedTaskControllers = [];
   }
 
-  renderTasks(container, array, _onDataChange) {
+  renderTasks(container, array, _onDataChange, _onViewChange) {
     return array.slice(0, INITIAL_TASKS_NUMBER).map((task) => {
-      const taskController = new TaskController(container, _onDataChange);
+      const taskController = new TaskController(container, _onDataChange, _onViewChange);
       taskController.render(task);
       return taskController;
     });
@@ -34,6 +35,12 @@ export default class BoardController {
 
     this._tasks = [].concat(this._tasks.slice(0, index), changedData, this._tasks.slice(index + 1));
     taskController.render(this._tasks[index]);
+  }
+
+  _onViewChange() {
+    this._showedTaskControllers.forEach((element) => {
+      element.setDefaultView();
+    });
   }
 
   render(tasks) {
@@ -65,12 +72,13 @@ export default class BoardController {
           sortedTasks = tasks.slice();
           break;
       }
-      this.renderTasks(boardListElement, sortedTasks, this._onDataChange);
+      const newTasks = this.renderTasks(boardListElement, sortedTasks, this._onDataChange, this._onViewChange);
+      this._showedTaskControllers = this._showedTaskControllers.concat(newTasks);
       render(container, this._loadMoreButton.getElement());
     };
     this._sort.setSortingTypeClickHandler(sortHandler);
 
-    this.renderTasks(boardListElement, sortedTasks, this._onDataChange);
+    this.renderTasks(boardListElement, sortedTasks, this._onDataChange, this._onViewChange);
 
     const loadMoreButton = this._loadMoreButton;
     render(container, loadMoreButton.getElement());
@@ -80,7 +88,8 @@ export default class BoardController {
       const renderedTasks = presentTasksNumber;
       presentTasksNumber += TASKS_TO_LOAD_MORE;
 
-      this.renderTasks(boardListElement, array.slice(renderedTasks, presentTasksNumber), this._onDataChange);
+      const newTasks = this.renderTasks(boardListElement, array.slice(renderedTasks, presentTasksNumber), this._onDataChange, this._onViewChange);
+      this._showedTaskControllers = this._showedTaskControllers.concat(newTasks);
 
       if (presentTasksNumber >= array.length) {
         loadMoreButton.getElement().remove();
