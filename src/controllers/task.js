@@ -56,7 +56,7 @@ export default class TaskController {
     });
 
     this._taskEditComponent.setSubmitHandler(() => {
-      replaceCardWithEditCard();
+      replaceEditCardWithCard();
     });
 
     render(this._container, this._taskComponent.getElement());

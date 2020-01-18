@@ -13,6 +13,18 @@ const renderHashtags = (array) => {
   })).join(``);
 };
 
+const createButtonTemplate = (name, isActive) => {
+  return (
+    `<button
+      type="button"
+      class="card__btn card__btn--${name} ${isActive ? `` : `card__btn--disabled`}"
+    >
+      ${name}
+    </button>`
+  );
+};
+
+
 const createTaskItemTemplate = (task) => {
   const isExpired = task.dueDate instanceof Date && task.dueDate < Date.now();
   const hashtags = renderHashtags(Array.from(task.tags));
@@ -21,23 +33,18 @@ const createTaskItemTemplate = (task) => {
   const date = task.dueDate === null ? `` : formatDate(task.dueDate);
   const time = task.dueDate === null ? `` : formatTime(task.dueDate);
 
+  const editButton = createButtonTemplate(`edit`, true);
+  const archiveButton = createButtonTemplate(`archive`, task.isArchive);
+  const favoritesButton = createButtonTemplate(`favorites`, task.isFavorite);
+
   return (
     `<article class="card card--${task.color} ${deadlineClass}">
       <div class="card__form">
         <div class="card__inner">
           <div class="card__control">
-            <button type="button" class="card__btn card__btn--edit">
-              edit
-            </button>
-            <button type="button" class="card__btn card__btn--archive">
-              archive
-            </button>
-            <button
-              type="button"
-              class="card__btn card__btn--favorites card__btn--disabled"
-            >
-              favorites
-            </button>
+          ${editButton}
+          ${archiveButton}
+          ${favoritesButton}
           </div>
 
           <div class="card__color-bar">

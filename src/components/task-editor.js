@@ -225,10 +225,10 @@ export default class TaskEditor extends AbstractSmartComponent {
     this._isDateShowing = !!task.dueDate;
     this._isTaskRepeted = Object.values(task.repeatingDays).some(Boolean);
     this._selectedRepetedDays = Object.assign({}, task.repeatingDays);
-    this.__subscribeOnEvents();
+    this._subscribeOnEvents();
   }
 
-  __subscribeOnEvents() {
+  _subscribeOnEvents() {
     const element = this.getElement();
 
     element.querySelector(`.card__date-deadline-toggle`).addEventListener(`click`, () => {

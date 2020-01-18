@@ -16,6 +16,8 @@ export default class BoardController {
     this._sort = new Sort();
     this._loadMoreButton = new LoadMoreButton();
     this._showedTaskControllers = [];
+    this._onViewChange = this._onViewChange.bind(this);
+    this._onDataChange = this._onDataChange.bind(this);
   }
 
   renderTasks(container, array, _onDataChange, _onViewChange) {
@@ -78,7 +80,7 @@ export default class BoardController {
     };
     this._sort.setSortingTypeClickHandler(sortHandler);
 
-    this.renderTasks(boardListElement, sortedTasks, this._onDataChange, this._onViewChange);
+    this._showedTaskControllers = this._showedTaskControllers.concat(this.renderTasks(boardListElement, sortedTasks, this._onDataChange, this._onViewChange));
 
     const loadMoreButton = this._loadMoreButton;
     render(container, loadMoreButton.getElement());
